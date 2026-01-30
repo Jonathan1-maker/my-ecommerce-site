@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - E-Shop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    E-Shop
+                </a>
+
+                <div class="nav-toggle" id="navToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="shop.html" class="nav-link">Shop</a></li>
+                    <li><a href="categories.html" class="nav-link">Categories</a></li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <button class="icon-btn" onclick="window.location.href='index.html'">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="btn btn-primary" id="loginBtn">Login</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container" style="padding: var(--spacing-2xl) 0;">
+            <h1 style="margin-bottom: var(--spacing-xl);">Shopping Cart</h1>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--spacing-xl);">
+                <!-- Cart Items -->
+                <div>
+                    <div id="cartItems">
+                        <div class="spinner" style="margin: 40px auto;"></div>
+                    </div>
+                </div>
+
+                <!-- Cart Summary -->
+                <div>
+                    <div class="card">
+                        <h3 class="card-header">Order Summary</h3>
+
+                        <div style="margin-bottom: var(--spacing-lg);">
+                            <div class="flex-between" style="margin-bottom: var(--spacing-md);">
+                                <span class="text-muted">Subtotal:</span>
+                                <span id="subtotal" style="font-weight: 600;">$0.00</span>
+                            </div>
+                            <div class="flex-between" style="margin-bottom: var(--spacing-md);">
+                                <span class="text-muted">Shipping:</span>
+                                <span id="shipping" style="font-weight: 600;">$10.00</span>
+                            </div>
+                            <div
+                                style="border-top: 2px solid var(--gray-100); padding-top: var(--spacing-md); margin-top: var(--spacing-md);">
+                                <div class="flex-between">
+                                    <span style="font-size: 1.25rem; font-weight: 700;">Total:</span>
+                                    <span id="total"
+                                        style="font-size: 1.5rem; font-weight: 700; color: var(--primary-blue);">$0.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" style="width: 100%; margin-bottom: var(--spacing-sm);"
+                            id="checkoutBtn">
+                            Proceed to Checkout
+                        </button>
+                        <button class="btn btn-outline" style="width: 100%;" onclick="window.location.href='shop.html'">
+                            Continue Shopping
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        let cartData = [];
+
+        // Check authentication
+        if (!AuthManager.isLoggedIn()) {
+            window.location.href = 'login.html';
+        }
+
+        // Load cart
+        async function loadCart() {
+            const container = document.getElementById('cartItems');
+
+            try {
+                const response = await API.getCart();
+                cartData = response.data;
+
+                if (cartData.length === 0) {
+                    container.innerHTML = `
+                        <div class="card" style="text-align: center; padding: var(--spacing-2xl);">
+                            <i class="fas fa-shopping-cart" style="font-size: 4rem; color: var(--gray-300); margin-bottom: var(--spacing-lg);"></i>
+                            <h3 style="margin-bottom: var(--spacing-md);">Your cart is empty</h3>
+                            <p class="text-muted" style="margin-bottom: var(--spacing-xl);">Add some products to get started!</p>
+                            <button class="btn btn-primary" onclick="window.location.href='shop.html'">
+                                Start Shopping
+                            </button>
+                        </div>
+                    `;
+                    updateSummary(0, 0);
+                    return;
+                }
+
+                container.innerHTML = cartData.map(item => `
+                    <div class="cart-item">
+                        <img src="${item.image || 'images/placeholder.png'}" alt="${item.name}" class="cart-item-image">
+                        <div class="cart-item-details">
+                            <h4 class="cart-item-name">${item.name}</h4>
+                            <div class="cart-item-price">${Utils.formatPrice(item.price)}</div>
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="updateQuantity(${item.id}, ${item.quantity - 1})">-</button>
+                                <span class="quantity-value">${item.quantity}</span>
+                                <button class="quantity-btn" onclick="updateQuantity(${item.id}, ${item.quantity + 1})">+</button>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between;">
+                            <button class="btn btn-danger btn-sm" onclick="removeItem(${item.id})">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                            <div style="font-size: 1.25rem; font-weight: 700; color: var(--primary-blue);">
+                                ${Utils.formatPrice(item.subtotal)}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                updateSummary(parseFloat(response.total), cartData.length);
+            } catch (error) {
+                console.error('Error loading cart:', error);
+                container.innerHTML = '<p class="text-center text-danger">Failed to load cart</p>';
+            }
+        }
+
+        // Update quantity
+        async function updateQuantity(itemId, newQuantity) {
+            if (newQuantity < 1) {
+                removeItem(itemId);
+                return;
+            }
+
+            try {
+                await API.updateCartItem(itemId, newQuantity);
+                await loadCart();
+                Toast.success('Cart updated');
+            } catch (error) {
+                Toast.error(error.message || 'Failed to update cart');
+            }
+        }
+
+        // Remove item
+        async function removeItem(itemId) {
+            if (!confirm('Remove this item from cart?')) return;
+
+            try {
+                await API.removeFromCart(itemId);
+                await loadCart();
+                Toast.success('Item removed from cart');
+            } catch (error) {
+                Toast.error(error.message || 'Failed to remove item');
+            }
+        }
+
+        // Update summary
+        function updateSummary(subtotal, itemCount) {
+            const shipping = subtotal > 100 ? 0 : (itemCount > 0 ? 10 : 0);
+            const total = subtotal + shipping;
+
+            document.getElementById('subtotal').textContent = Utils.formatPrice(subtotal);
+            document.getElementById('shipping').textContent = shipping === 0 ? 'FREE' : Utils.formatPrice(shipping);
+            document.getElementById('total').textContent = Utils.formatPrice(total);
+        }
+
+        // Checkout
+        document.getElementById('checkoutBtn').addEventListener('click', () => {
+            if (cartData.length === 0) {
+                Toast.error('Your cart is empty');
+                return;
+            }
+            window.location.href = 'checkout.html';
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCart();
+
+            // Mobile Menu Toggle
+            const navToggle = document.getElementById('navToggle');
+            const navMenu = document.querySelector('.nav-menu');
+            if (navToggle && navMenu) {
+                navToggle.addEventListener('click', () => {
+                    navToggle.classList.toggle('active');
+                    navMenu.classList.toggle('active');
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

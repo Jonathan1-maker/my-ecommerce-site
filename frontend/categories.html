@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories - E-Shop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    E-Shop
+                </a>
+
+                <div class="nav-toggle" id="navToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="shop.html" class="nav-link">Shop</a></li>
+                    <li><a href="categories.html" class="nav-link active">Categories</a></li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <button class="icon-btn" onclick="window.location.href='cart.html'">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="badge" id="cartCount">0</span>
+                    </button>
+                    <button class="btn btn-primary" id="loginBtn">Login</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container" style="padding: var(--spacing-2xl) 0;">
+            <h1 style="margin-bottom: var(--spacing-xl);">Browse Categories</h1>
+
+            <div class="product-grid" id="allCategoriesGrid">
+                <!-- Categories will be loaded here -->
+                <div class="spinner" style="margin: 40px auto; grid-column: 1 / -1;"></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadAllCategories();
+            updateCartCount();
+
+            // Mobile Menu Toggle
+            const navToggle = document.getElementById('navToggle');
+            const navMenu = document.querySelector('.nav-menu');
+            if (navToggle && navMenu) {
+                navToggle.addEventListener('click', () => {
+                    navToggle.classList.toggle('active');
+                    navMenu.classList.toggle('active');
+                });
+            }
+        });
+
+        async function loadAllCategories() {
+            const container = document.getElementById('allCategoriesGrid');
+            try {
+                const response = await API.getCategories();
+                const categories = response.data;
+
+                container.innerHTML = categories.map((category, index) => `
+                    <div class="product-card" onclick="window.location.href='shop.html?category=${category.id}'" style="cursor: pointer; text-align: center;">
+                        <div style="height: 180px; background: linear-gradient(${45 + (index * 45)}deg, #3b82f6 0%, #1d4ed8 100%); display: flex; align-items: center; justify-content: center;">
+                            <i class="fas ${getCategoryIcon(category.name)}" style="font-size: 4rem; color: white;"></i>
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-name">${category.name}</h3>
+                            <p class="text-muted" style="font-size: 0.875rem;">${category.description || 'Explore our collection'}</p>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                container.innerHTML = '<p class="text-danger">Failed to load categories.</p>';
+            }
+        }
+
+        function getCategoryIcon(name) {
+            const icons = {
+                'Electronics': 'fa-laptop',
+                'Wearables': 'fa-clock',
+                'Audio': 'fa-headphones',
+                'Gaming': 'fa-gamepad'
+            };
+            return icons[name] || 'fa-tag';
+        }
+
+        async function updateCartCount() {
+            if (!AuthManager.isLoggedIn()) return;
+            try {
+                const response = await API.getCart();
+                document.getElementById('cartCount').textContent = response.count || 0;
+            } catch (error) { }
+        }
+    </script>
+</body>
+
+</html>

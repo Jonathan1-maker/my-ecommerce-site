@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wishlist - E-Shop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--spacing-xl);
+            padding: var(--spacing-2xl) 0;
+        }
+
+        .empty-wishlist {
+            text-align: center;
+            padding: 100px 0;
+        }
+
+        .empty-wishlist i {
+            font-size: 4rem;
+            color: var(--gray-300);
+            margin-bottom: var(--spacing-lg);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon"><i class="fas fa-store"></i></div> E-Shop
+                </a>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="shop.html" class="nav-link">Shop</a></li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="cart.html" class="icon-btn">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="badge" id="cartCount">0</span>
+                    </a>
+                    <a href="account.html" class="icon-btn"><i class="fas fa-user"></i></a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1 style="margin-top: var(--spacing-2xl);">My Wishlist</h1>
+
+        <div id="wishlistContainer">
+            <!-- Wishlist items will be loaded here -->
+            <div class="empty-wishlist">
+                <i class="far fa-heart"></i>
+                <h2>Your wishlist is empty</h2>
+                <p>Add some products to your wishlist to see them here.</p>
+                <a href="shop.html" class="btn btn-primary mt-4">Start Shopping</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background: var(--gray-900); color: var(--white); padding: 60px 0; margin-top: 60px;">
+        <div class="container">
+            <div style="text-align: center;">
+                <p>&copy; 2026 E-Shop. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!AuthManager.isLoggedIn()) {
+                window.location.href = 'login.html?redirect=wishlist.html';
+                return;
+            }
+            await loadWishlist();
+        });
+
+        async function loadWishlist() {
+            try {
+                const res = await API.getWishlist();
+                const wishlist = res.data;
+                const container = document.getElementById('wishlistContainer');
+
+                if (wishlist.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-wishlist">
+                            <i class="far fa-heart"></i>
+                            <h2>Your wishlist is empty</h2>
+                            <p>Add some products to your wishlist to see them here.</p>
+                            <a href="shop.html" class="btn btn-primary mt-2">Start Shopping</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="wishlist-grid">
+                        ${wishlist.map(item => `
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="${item.image || 'images/placeholder.png'}" alt="${item.name}">
+                                    <button class="wishlist-btn active" onclick="removeFromWishlist(${item.product_id})">
+                                        <i class="fas fa-heart"></i>
+                                    </button>
+                                </div>
+                                <div class="product-info">
+                                    <a href="product.html?id=${item.product_id}" class="product-name">${item.name}</a>
+                                    <div class="product-price">${Utils.formatPrice(item.price)}</div>
+                                    <button class="btn btn-primary w-100 mt-2" onclick="addToCart(${item.product_id})">Add to Cart</button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } catch (err) {
+                Toast.error(err.message);
+            }
+        }
+
+        async function removeFromWishlist(productId) {
+            try {
+                await API.removeFromWishlist(productId);
+                Toast.success('Removed from wishlist');
+                await loadWishlist();
+            } catch (err) {
+                Toast.error(err.message);
+            }
+        }
+
+        async function addToCart(productId) {
+            try {
+                await API.addToCart(productId);
+                Toast.success('Added to cart');
+                updateCartCount();
+            } catch (err) {
+                Toast.error(err.message);
+            }
+        }
+    </script>
+</body>
+
+</html>

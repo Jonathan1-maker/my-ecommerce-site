@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - E-Shop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    E-Shop
+                </a>
+
+                <div class="nav-toggle" id="navToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="shop.html" class="nav-link">Shop</a></li>
+                    <li><a href="categories.html" class="nav-link">Categories</a></li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <button class="icon-btn" id="searchBtn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <a href="wishlist.html" class="icon-btn" id="wishlistBtn">
+                        <i class="fas fa-heart"></i>
+                        <span class="badge" id="wishlistCount">0</span>
+                    </a>
+                    <a href="cart.html" class="icon-btn" id="cartBtn">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="badge" id="cartCount">0</span>
+                    </a>
+                    <button class="btn btn-primary" id="loginBtn">Login</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container" style="padding: var(--spacing-2xl) 0;">
+            <div
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-2xl); margin-bottom: var(--spacing-2xl);">
+                <!-- Image Gallery -->
+                <div class="card flex-center" style="background: var(--gray-100);">
+                    <img id="productImage" src="images/placeholder.png" alt="Product"
+                        style="max-width: 100%; max-height: 500px; object-fit: contain;">
+                </div>
+
+                <!-- Product Details -->
+                <div class="product-details">
+                    <h1 id="productName" style="margin-bottom: var(--spacing-md);">Loading Product...</h1>
+
+                    <div class="product-rating" style="margin-bottom: var(--spacing-md); font-size: 1.1rem;">
+                        <span class="stars" id="productStars"></span>
+                        <span class="reviews-count" id="productReviewsCount">(0 Reviews)</span>
+                    </div>
+
+                    <div id="productPrice"
+                        style="font-size: 2rem; font-weight: 700; color: var(--primary-blue); margin-bottom: var(--spacing-lg);">
+                        $0.00</div>
+
+                    <p id="productDescription" class="text-muted"
+                        style="margin-bottom: var(--spacing-xl); font-size: 1.1rem; line-height: 1.8;">
+                        Loading description...
+                    </p>
+
+                    <div
+                        style="display: flex; gap: var(--spacing-md); align-items: center; margin-bottom: var(--spacing-xl);">
+                        <div class="quantity-control" style="margin: 0;">
+                            <button class="quantity-btn" id="decreaseQty">-</button>
+                            <span class="quantity-value" id="qtyValue">1</span>
+                            <button class="quantity-btn" id="increaseQty">+</button>
+                        </div>
+                        <span class="text-muted" id="stockStatus">In Stock</span>
+                    </div>
+
+                    <div style="display: flex; gap: var(--spacing-md);">
+                        <button class="btn btn-primary btn-lg" style="flex: 1;" id="addCartDetailBtn">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
+                        <button class="btn btn-danger btn-lg" style="flex: 1;" id="buyNowBtn">
+                            Buy Now
+                        </button>
+                    </div>
+
+                    <div
+                        style="margin-top: var(--spacing-xl); border-top: 1px solid var(--gray-200); padding-top: var(--spacing-lg);">
+                        <button class="btn btn-outline" style="font-size: 1rem; color: var(--gray-700);"
+                            id="wishlistDetailBtn">
+                            <i class="far fa-heart"></i> Add to Wishlist
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs Section -->
+            <section style="margin-bottom: var(--spacing-2xl);">
+                <div class="tabs-header">
+                    <button class="tab-btn active" onclick="openTab(event, 'description')">Description</button>
+                    <button class="tab-btn" onclick="openTab(event, 'reviews')">Reviews</button>
+                    <button class="tab-btn" onclick="openTab(event, 'related')">Related Products</button>
+                </div>
+
+                <div id="description" class="tab-content active">
+                    <div class="card">
+                        <p id="longDescription" class="text-muted">Detailed technical specifications and features will
+                            appear here.</p>
+                    </div>
+                </div>
+
+                <div id="reviews" class="tab-content">
+                    <div class="card">
+                        <div id="reviewList">
+                            <!-- Reviews will be loaded here -->
+                        </div>
+
+                        <div class="review-form mt-4" id="reviewFormSection">
+                            <h3>Write a Review</h3>
+                            <form id="addReviewForm">
+                                <div class="form-group">
+                                    <label class="form-label">Rating</label>
+                                    <div class="star-rating">
+                                        <input type="radio" id="star5" name="rating" value="5"><label for="star5"><i
+                                                class="fas fa-star"></i></label>
+                                        <input type="radio" id="star4" name="rating" value="4"><label for="star4"><i
+                                                class="fas fa-star"></i></label>
+                                        <input type="radio" id="star3" name="rating" value="3"><label for="star3"><i
+                                                class="fas fa-star"></i></label>
+                                        <input type="radio" id="star2" name="rating" value="2"><label for="star2"><i
+                                                class="fas fa-star"></i></label>
+                                        <input type="radio" id="star1" name="rating" value="1"><label for="star1"><i
+                                                class="fas fa-star"></i></label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Your Comment</label>
+                                    <textarea class="form-input" id="reviewComment" rows="4"
+                                        placeholder="Share your experience with this product..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit Review</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="related" class="tab-content">
+                    <div class="product-grid" id="relatedProducts">
+                        <!-- Related products will be injected here -->
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+        let currentProduct = null;
+        let quantity = 1;
+
+        if (!productId) {
+            window.location.href = 'shop.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadProduct();
+            await loadReviews();
+            updateCartCount();
+            updateWishlistCount();
+
+            // Mobile Menu Toggle
+            const navToggle = document.getElementById('navToggle');
+            const navMenu = document.querySelector('.nav-menu');
+            if (navToggle && navMenu) {
+                navToggle.addEventListener('click', () => {
+                    navToggle.classList.toggle('active');
+                    navMenu.classList.toggle('active');
+                });
+            }
+        });
+
+        function openTab(evt, tabName) {
+            const contents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < contents.length; i++) contents[i].classList.remove("active");
+
+            const btns = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < btns.length; i++) btns[i].classList.remove("active");
+
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        async function loadProduct() {
+            try {
+                const response = await API.getProduct(productId);
+                currentProduct = response.data;
+
+                document.title = `${currentProduct.name} - E-Shop`;
+                document.getElementById('productName').textContent = currentProduct.name;
+                document.getElementById('productPrice').textContent = Utils.formatPrice(currentProduct.price);
+                document.getElementById('productDescription').textContent = currentProduct.description;
+                document.getElementById('longDescription').textContent = currentProduct.description;
+                document.getElementById('productStars').innerHTML = Utils.generateStars(currentProduct.rating || 0);
+                document.getElementById('productReviewsCount').textContent = `(${currentProduct.reviews_count || 0} Reviews)`;
+                document.getElementById('productImage').src = currentProduct.image || 'images/placeholder.png';
+                document.getElementById('stockStatus').textContent = currentProduct.stock > 0 ? `In Stock (${currentProduct.stock})` : 'Out of Stock';
+
+                if (currentProduct.stock <= 0) {
+                    document.getElementById('addCartDetailBtn').disabled = true;
+                    document.getElementById('buyNowBtn').disabled = true;
+                    document.getElementById('stockStatus').classList.add('text-danger');
+                }
+
+                loadRelatedProducts(currentProduct.category_id);
+                checkWishlistStatus();
+            } catch (error) {
+                console.error('Error:', error);
+                Toast.error('Product not found');
+                setTimeout(() => window.location.href = 'shop.html', 2000);
+            }
+        }
+
+        async function loadReviews() {
+            try {
+                const res = await API.getProductReviews(productId);
+                const reviews = res.data;
+                const container = document.getElementById('reviewList');
+
+                if (reviews.length === 0) {
+                    container.innerHTML = '<p class="text-muted">No reviews yet. Be the first to review!</p>';
+                    return;
+                }
+
+                container.innerHTML = reviews.map(r => `
+                    <div class="review-item">
+                        <div class="review-header">
+                            <div>
+                                <span class="review-user">${r.user_name}</span>
+                                <div class="stars" style="font-size: 0.8rem;">${Utils.generateStars(r.rating)}</div>
+                            </div>
+                            <span class="review-date">${Utils.formatDate(r.created_at)}</span>
+                        </div>
+                        <p class="review-comment">${r.comment || ''}</p>
+                    </div>
+                `).join('');
+            } catch (err) { console.error(err); }
+        }
+
+        document.getElementById('addReviewForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!AuthManager.isLoggedIn()) {
+                Toast.error('Please login to leave a review');
+                return;
+            }
+
+            const rating = document.querySelector('input[name="rating"]:checked');
+            const comment = document.getElementById('reviewComment').value;
+
+            if (!rating) {
+                Toast.error('Please select a rating');
+                return;
+            }
+
+            try {
+                await API.addReview({
+                    product_id: productId,
+                    rating: rating.value,
+                    comment
+                });
+                Toast.success('Review submitted!');
+                document.getElementById('addReviewForm').reset();
+                await loadProduct(); // Refresh rating
+                await loadReviews();
+            } catch (err) {
+                Toast.error(err.message);
+            }
+        });
+
+        async function checkWishlistStatus() {
+            if (!AuthManager.isLoggedIn()) return;
+            try {
+                const res = await API.getWishlist();
+                const isInWishlist = res.data.some(item => item.product_id == productId);
+                const btn = document.getElementById('wishlistDetailBtn');
+                if (isInWishlist) {
+                    btn.innerHTML = '<i class="fas fa-heart" style="color: var(--primary-red);"></i> In Wishlist';
+                    btn.classList.add('active');
+                } else {
+                    btn.innerHTML = '<i class="far fa-heart"></i> Add to Wishlist';
+                    btn.classList.remove('active');
+                }
+            } catch (err) { }
+        }
+
+        document.getElementById('wishlistDetailBtn').addEventListener('click', async () => {
+            if (!AuthManager.isLoggedIn()) {
+                Toast.error('Please login to use wishlist');
+                return;
+            }
+
+            const btn = document.getElementById('wishlistDetailBtn');
+            const isActive = btn.classList.contains('active');
+
+            try {
+                if (isActive) {
+                    await API.removeFromWishlist(productId);
+                    Toast.success('Removed from wishlist');
+                } else {
+                    await API.addToWishlist(productId);
+                    Toast.success('Added to wishlist');
+                }
+                checkWishlistStatus();
+                updateWishlistCount();
+            } catch (err) {
+                Toast.error(err.message);
+            }
+        });
+
+        async function loadRelatedProducts(categoryId) {
+            try {
+                const response = await API.getProducts({ category: categoryId, limit: 4 });
+                const products = response.data.filter(p => p.id != productId);
+
+                const container = document.getElementById('relatedProducts');
+                if (products.length === 0) {
+                    container.innerHTML = '<p class="text-muted">No related products found.</p>';
+                    return;
+                }
+
+                container.innerHTML = products.map(product => `
+                    <div class="product-card" onclick="window.location.href='product.html?id=${product.id}'">
+                        <img src="${product.image || 'images/placeholder.png'}" alt="${product.name}" class="product-image">
+                        <div class="product-info">
+                            <h3 class="product-name">${product.name}</h3>
+                            <div class="product-price">${Utils.formatPrice(product.price)}</div>
+                            <div class="product-rating">
+                                <span class="stars">${Utils.generateStars(product.rating || 0)}</span>
+                                <span class="reviews-count">(${product.reviews_count || 0})</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        document.getElementById('increaseQty').addEventListener('click', () => {
+            if (quantity < currentProduct.stock) {
+                quantity++;
+                document.getElementById('qtyValue').textContent = quantity;
+            }
+        });
+
+        document.getElementById('decreaseQty').addEventListener('click', () => {
+            if (quantity > 1) {
+                quantity--;
+                document.getElementById('qtyValue').textContent = quantity;
+            }
+        });
+
+        document.getElementById('addCartDetailBtn').addEventListener('click', async () => {
+            if (!AuthManager.isLoggedIn()) {
+                Toast.error('Please login to add items to cart');
+                return;
+            }
+            try {
+                await API.addToCart(productId, quantity);
+                Toast.success('Added to cart!');
+                updateCartCount();
+            } catch (error) {
+                Toast.error(error.message);
+            }
+        });
+
+        document.getElementById('buyNowBtn').addEventListener('click', async () => {
+            if (!AuthManager.isLoggedIn()) {
+                Toast.error('Please login to checkout');
+                return;
+            }
+            try {
+                await API.addToCart(productId, quantity);
+                window.location.href = 'cart.html';
+            } catch (error) {
+                Toast.error(error.message);
+            }
+        });
+
+        async function updateCartCount() {
+            const el = document.getElementById('cartCount');
+            if (!el || !AuthManager.isLoggedIn()) {
+                if (el) el.textContent = '0';
+                return;
+            }
+            try {
+                const response = await API.getCart();
+                el.textContent = response.count || 0;
+            } catch (error) { }
+        }
+
+        async function updateWishlistCount() {
+            const el = document.getElementById('wishlistCount');
+            if (!el || !AuthManager.isLoggedIn()) {
+                if (el) el.textContent = '0';
+                return;
+            }
+            try {
+                const res = await API.getWishlist();
+                el.textContent = res.count || 0;
+            } catch (err) { console.error(err); }
+        }
+    </script>
+</body>
+
+</html>

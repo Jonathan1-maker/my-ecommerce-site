@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - E-Shop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .account-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: var(--spacing-xl);
+            padding: var(--spacing-2xl) 0;
+        }
+
+        @media (max-width: 768px) {
+            .account-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sidebar-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            padding: var(--spacing-lg);
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .sidebar-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: transparent;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--gray-600);
+            transition: all 0.2s ease;
+            text-align: left;
+            width: 100%;
+        }
+
+        .sidebar-btn:hover {
+            background: var(--gray-100);
+            color: var(--gray-900);
+        }
+
+        .sidebar-btn.active {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            color: white;
+        }
+
+        .sidebar-btn i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .content-header {
+            padding: var(--spacing-xl);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .content-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--gray-900);
+        }
+
+        .content-body {
+            padding: var(--spacing-xl);
+        }
+
+        /* Order Card Styles */
+        .order-card {
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            transition: all 0.2s ease;
+        }
+
+        .order-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-blue);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .order-id {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .order-date {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            margin-top: var(--spacing-xs);
+        }
+
+        .order-total {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .order-status {
+            display: inline-block;
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: var(--spacing-xs);
+        }
+
+        .order-items {
+            display: flex;
+            gap: var(--spacing-md);
+            margin: var(--spacing-md) 0;
+            flex-wrap: wrap;
+        }
+
+        .order-item-img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--gray-200);
+        }
+
+        .order-item-more {
+            width: 60px;
+            height: 60px;
+            background: var(--gray-100);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--gray-600);
+        }
+
+        .order-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-md);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid var(--gray-100);
+        }
+
+        .confirm-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            transition: all 0.2s ease;
+        }
+
+        .confirm-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        .confirm-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Address Card Styles */
+        .address-card {
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .address-card:hover {
+            border-color: var(--primary-blue);
+        }
+
+        .address-card.default {
+            border-color: var(--primary-blue);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(147, 51, 234, 0.05));
+        }
+
+        .default-badge {
+            position: absolute;
+            top: var(--spacing-md);
+            right: var(--spacing-md);
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            color: white;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .address-name {
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .address-details {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .address-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+        }
+
+        .address-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: white;
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: var(--spacing-xl);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray-500);
+        }
+
+        .modal-body {
+            padding: var(--spacing-xl);
+        }
+
+        .modal-footer {
+            padding: var(--spacing-lg) var(--spacing-xl);
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: flex-end;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-3xl);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--gray-300);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .empty-state h3 {
+            color: var(--gray-600);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .empty-state p {
+            color: var(--gray-500);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        /* Profile Form */
+        .profile-form {
+            max-width: 500px;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        /* Loading spinner */
+        .loading-container {
+            display: flex;
+            justify-content: center;
+            padding: var(--spacing-3xl);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    E-Shop
+                </a>
+
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="shop.html" class="nav-link">Shop</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <button class="icon-btn" onclick="window.location.href='wishlist.html'">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <button class="icon-btn" onclick="window.location.href='cart.html'">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="badge" id="cartCount">0</span>
+                    </button>
+                    <button class="btn btn-primary" id="loginBtn">Account</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-xl) 0;">
+            <div>
+                <h1 style="margin-bottom: var(--spacing-xs);">Welcome back, <span id="userName">User</span>!</h1>
+                <p class="text-muted">Manage your account settings and view your orders</p>
+            </div>
+            <button class="btn btn-danger" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+
+        <div class="account-container">
+            <!-- Sidebar -->
+            <div>
+                <div class="sidebar-card">
+                    <nav class="sidebar-nav">
+                        <button class="sidebar-btn active" data-tab="orders">
+                            <i class="fas fa-box"></i> My Orders
+                        </button>
+                        <button class="sidebar-btn" data-tab="profile">
+                            <i class="fas fa-user"></i> Account Details
+                        </button>
+                        <button class="sidebar-btn" data-tab="addresses">
+                            <i class="fas fa-map-marker-alt"></i> Addresses
+                        </button>
+                        <button class="sidebar-btn" data-tab="wishlist">
+                            <i class="fas fa-heart"></i> Wishlist
+                        </button>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div>
+                <!-- My Orders Tab -->
+                <div id="ordersTab" class="tab-content active">
+                    <div class="content-card">
+                        <div class="content-header">
+                            <h2><i class="fas fa-box"
+                                    style="margin-right: var(--spacing-sm); color: var(--primary-blue);"></i> My Orders
+                            </h2>
+                        </div>
+                        <div class="content-body" id="ordersList">
+                            <div class="loading-container">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Details Tab -->
+                <div id="profileTab" class="tab-content">
+                    <div class="content-card">
+                        <div class="content-header">
+                            <h2><i class="fas fa-user"
+                                    style="margin-right: var(--spacing-sm); color: var(--primary-blue);"></i> Account
+                                Details</h2>
+                        </div>
+                        <div class="content-body">
+                            <div class="profile-form">
+                                <div class="profile-avatar" id="profileAvatar">J</div>
+                                <form id="profileForm">
+                                    <div class="form-group">
+                                        <label class="form-label">Full Name</label>
+                                        <input type="text" class="form-input" id="profileName" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">Email Address</label>
+                                        <input type="email" class="form-input" id="profileEmail" disabled>
+                                        <small class="text-muted">Email cannot be changed</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">Phone Number</label>
+                                        <input type="tel" class="form-input" id="profilePhone"
+                                            placeholder="Enter phone number">
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Save Changes
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Addresses Tab -->
+                <div id="addressesTab" class="tab-content">
+                    <div class="content-card">
+                        <div class="content-header">
+                            <h2><i class="fas fa-map-marker-alt"
+                                    style="margin-right: var(--spacing-sm); color: var(--primary-blue);"></i> Saved
+                                Addresses</h2>
+                            <button class="btn btn-primary" id="addAddressBtn">
+                                <i class="fas fa-plus"></i> Add New Address
+                            </button>
+                        </div>
+                        <div class="content-body" id="addressesList">
+                            <div class="loading-container">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wishlist Tab -->
+                <div id="wishlistTab" class="tab-content">
+                    <div class="content-card">
+                        <div class="content-header">
+                            <h2><i class="fas fa-heart" style="margin-right: var(--spacing-sm); color: #ef4444;"></i> My
+                                Wishlist</h2>
+                        </div>
+                        <div class="content-body">
+                            <div class="empty-state">
+                                <i class="fas fa-heart"></i>
+                                <h3>Your wishlist is managed separately</h3>
+                                <p>View and manage all your saved items in the wishlist page</p>
+                                <a href="wishlist.html" class="btn btn-primary">
+                                    <i class="fas fa-external-link-alt"></i> Go to Wishlist
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Address Modal -->
+    <div class="modal-overlay" id="addressModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="addressModalTitle">Add New Address</h3>
+                <button class="modal-close" onclick="closeAddressModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addressForm">
+                    <input type="hidden" id="addressId">
+                    <div class="form-group">
+                        <label class="form-label">Full Name *</label>
+                        <input type="text" class="form-input" id="addressFullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Address Line 1 *</label>
+                        <input type="text" class="form-input" id="addressLine1" required placeholder="Street address">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Address Line 2</label>
+                        <input type="text" class="form-input" id="addressLine2"
+                            placeholder="Apartment, suite, etc. (optional)">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md);">
+                        <div class="form-group">
+                            <label class="form-label">City *</label>
+                            <input type="text" class="form-input" id="addressCity" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">State/Province</label>
+                            <input type="text" class="form-input" id="addressState">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md);">
+                        <div class="form-group">
+                            <label class="form-label">ZIP/Postal Code *</label>
+                            <input type="text" class="form-input" id="addressZip" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Country *</label>
+                            <input type="text" class="form-input" id="addressCountry" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer;">
+                            <input type="checkbox" id="addressDefault">
+                            <span>Set as default address</span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeAddressModal()">Cancel</button>
+                <button class="btn btn-primary" id="saveAddressBtn" onclick="saveAddress()">
+                    <i class="fas fa-save"></i> Save Address
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Order Modal -->
+    <div class="modal-overlay" id="confirmOrderModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Confirm Order Received</h3>
+                <button class="modal-close" onclick="closeConfirmModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; padding: var(--spacing-lg);">
+                    <i class="fas fa-box-open"
+                        style="font-size: 4rem; color: var(--primary-blue); margin-bottom: var(--spacing-lg);"></i>
+                    <h3 style="margin-bottom: var(--spacing-md);">Have you received your order?</h3>
+                    <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
+                        By confirming, you acknowledge that you have received all items in this order.
+                        This action cannot be undone.
+                    </p>
+                    <p id="confirmOrderDetails" style="font-weight: 600; color: var(--gray-900);"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeConfirmModal()">Not Yet</button>
+                <button class="btn btn-primary" id="confirmReceiveBtn"
+                    style="background: linear-gradient(135deg, #10b981, #059669);">
+                    <i class="fas fa-check"></i> Yes, I Received It
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Check authentication
+        if (!AuthManager.isLoggedIn()) {
+            window.location.href = 'login.html';
+        }
+
+        const user = AuthManager.getUser();
+        document.getElementById('userName').textContent = user.name.split(' ')[0];
+        document.getElementById('profileAvatar').textContent = user.name.charAt(0).toUpperCase();
+
+        // Tab switching
+        document.querySelectorAll('.sidebar-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tab = btn.dataset.tab;
+
+                // Update active button
+                document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // Show/hide tabs
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(`${tab}Tab`).classList.add('active');
+            });
+        });
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            if (confirm('Are you sure you want to logout?')) {
+                AuthManager.logout();
+            }
+        });
+
+        // ==================== ORDERS ====================
+        let currentOrderId = null;
+
+        async function loadOrders() {
+            const container = document.getElementById('ordersList');
+
+            try {
+                const response = await API.getOrders();
+                const orders = response.data;
+
+                if (orders.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-box-open"></i>
+                            <h3>No orders yet</h3>
+                            <p>When you place an order, it will appear here</p>
+                            <a href="shop.html" class="btn btn-primary">
+                                <i class="fas fa-shopping-bag"></i> Start Shopping
+                            </a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = orders.map(order => `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-id">Order #${order.id}</div>
+                                <div class="order-date">${Utils.formatDate(order.created_at)}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="order-total">${Utils.formatPrice(order.total)}</div>
+                                <span class="order-status" style="background: ${getStatusColor(order.status)}20; color: ${getStatusColor(order.status)};">
+                                    ${order.status.toUpperCase()}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="order-items">
+                            ${order.items ? order.items.slice(0, 4).map(item => `
+                                <img src="${item.image || 'images/placeholder.png'}" alt="${item.name}" class="order-item-img" title="${item.name}">
+                            `).join('') : ''}
+                            ${order.items && order.items.length > 4 ? `<div class="order-item-more">+${order.items.length - 4}</div>` : ''}
+                        </div>
+                        <div class="order-actions">
+                            <button class="btn btn-outline btn-sm" onclick="viewOrder(${order.id})">
+                                <i class="fas fa-eye"></i> View Details
+                            </button>
+                            ${order.status !== 'delivered' && order.status !== 'cancelled' ? `
+                                <button class="confirm-btn" onclick="openConfirmModal(${order.id}, '${Utils.formatPrice(order.total)}')">
+                                    <i class="fas fa-check-circle"></i> Confirm Received
+                                </button>
+                            ` : ''}
+                            ${order.status === 'delivered' ? `
+                                <span style="display: flex; align-items: center; gap: var(--spacing-sm); color: #10b981; font-weight: 600;">
+                                    <i class="fas fa-check-circle"></i> Delivered
+                                </span>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                container.innerHTML = '<p class="text-danger" style="text-align: center;">Failed to load orders. Please try again.</p>';
+            }
+        }
+
+        function getStatusColor(status) {
+            const colors = {
+                'pending': '#f59e0b',
+                'processing': '#3b82f6',
+                'shipped': '#8b5cf6',
+                'delivered': '#10b981',
+                'cancelled': '#ef4444'
+            };
+            return colors[status] || '#6b7280';
+        }
+
+        function viewOrder(orderId) {
+            window.location.href = `order-details.html?id=${orderId}`;
+        }
+
+        function openConfirmModal(orderId, total) {
+            currentOrderId = orderId;
+            document.getElementById('confirmOrderDetails').textContent = `Order #${orderId} - ${total}`;
+            document.getElementById('confirmOrderModal').classList.add('active');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmOrderModal').classList.remove('active');
+            currentOrderId = null;
+        }
+
+        document.getElementById('confirmReceiveBtn').addEventListener('click', async () => {
+            if (!currentOrderId) return;
+
+            const btn = document.getElementById('confirmReceiveBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+            try {
+                await API.confirmOrder(currentOrderId);
+                Toast.success('Order confirmed as delivered! Thank you for shopping with us.');
+                closeConfirmModal();
+                loadOrders(); // Reload orders to show updated status
+            } catch (error) {
+                Toast.error(error.message || 'Failed to confirm order');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check"></i> Yes, I Received It';
+            }
+        });
+
+        // ==================== PROFILE ====================
+        async function loadProfile() {
+            try {
+                const response = await API.getMe();
+                const user = response.data;
+
+                document.getElementById('profileName').value = user.name || '';
+                document.getElementById('profileEmail').value = user.email || '';
+                document.getElementById('profilePhone').value = user.phone || '';
+                document.getElementById('profileAvatar').textContent = (user.name || 'U').charAt(0).toUpperCase();
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('profileName').value;
+            const phone = document.getElementById('profilePhone').value;
+
+            try {
+                await API.updateProfile({ name, phone });
+
+                // Update stored user
+                const user = AuthManager.getUser();
+                user.name = name;
+                user.phone = phone;
+                localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
+
+                Toast.success('Profile updated successfully!');
+                document.getElementById('userName').textContent = name.split(' ')[0];
+                document.getElementById('profileAvatar').textContent = name.charAt(0).toUpperCase();
+            } catch (error) {
+                Toast.error(error.message || 'Failed to update profile');
+            }
+        });
+
+        // ==================== ADDRESSES ====================
+        let editingAddressId = null;
+
+        async function loadAddresses() {
+            const container = document.getElementById('addressesList');
+
+            try {
+                const response = await API.getAddresses();
+                const addresses = response.data;
+
+                if (addresses.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <h3>No addresses saved</h3>
+                            <p>Add a shipping address for faster checkout</p>
+                            <button class="btn btn-primary" onclick="openAddressModal()">
+                                <i class="fas fa-plus"></i> Add Address
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="address-grid">
+                        ${addresses.map(addr => `
+                            <div class="address-card ${addr.is_default ? 'default' : ''}">
+                                ${addr.is_default ? '<span class="default-badge">Default</span>' : ''}
+                                <div class="address-name">${addr.full_name}</div>
+                                <div class="address-details">
+                                    ${addr.address_line1}<br>
+                                    ${addr.address_line2 ? addr.address_line2 + '<br>' : ''}
+                                    ${addr.city}${addr.state ? ', ' + addr.state : ''} ${addr.zip_code}<br>
+                                    ${addr.country}
+                                </div>
+                                <div class="address-actions">
+                                    <button class="btn btn-outline btn-sm" onclick="editAddress(${addr.id})">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    ${!addr.is_default ? `
+                                        <button class="btn btn-outline btn-sm" onclick="setDefaultAddress(${addr.id})">
+                                            <i class="fas fa-star"></i> Set Default
+                                        </button>
+                                    ` : ''}
+                                    <button class="btn btn-outline btn-sm" style="color: var(--error);" onclick="deleteAddress(${addr.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading addresses:', error);
+                container.innerHTML = '<p class="text-danger" style="text-align: center;">Failed to load addresses. Please try again.</p>';
+            }
+        }
+
+        document.getElementById('addAddressBtn').addEventListener('click', () => openAddressModal());
+
+        function openAddressModal(address = null) {
+            editingAddressId = address ? address.id : null;
+            document.getElementById('addressModalTitle').textContent = address ? 'Edit Address' : 'Add New Address';
+            document.getElementById('addressId').value = address ? address.id : '';
+            document.getElementById('addressFullName').value = address ? address.full_name : '';
+            document.getElementById('addressLine1').value = address ? address.address_line1 : '';
+            document.getElementById('addressLine2').value = address ? address.address_line2 || '' : '';
+            document.getElementById('addressCity').value = address ? address.city : '';
+            document.getElementById('addressState').value = address ? address.state || '' : '';
+            document.getElementById('addressZip').value = address ? address.zip_code : '';
+            document.getElementById('addressCountry').value = address ? address.country : '';
+            document.getElementById('addressDefault').checked = address ? address.is_default : false;
+            document.getElementById('addressModal').classList.add('active');
+        }
+
+        function closeAddressModal() {
+            document.getElementById('addressModal').classList.remove('active');
+            document.getElementById('addressForm').reset();
+            editingAddressId = null;
+        }
+
+        async function editAddress(addressId) {
+            try {
+                const response = await API.getAddresses();
+                const address = response.data.find(a => a.id === addressId);
+                if (address) {
+                    openAddressModal(address);
+                }
+            } catch (error) {
+                Toast.error('Failed to load address');
+            }
+        }
+
+        async function saveAddress() {
+            const btn = document.getElementById('saveAddressBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+            const addressData = {
+                full_name: document.getElementById('addressFullName').value,
+                address_line1: document.getElementById('addressLine1').value,
+                address_line2: document.getElementById('addressLine2').value || null,
+                city: document.getElementById('addressCity').value,
+                state: document.getElementById('addressState').value || null,
+                zip_code: document.getElementById('addressZip').value,
+                country: document.getElementById('addressCountry').value,
+                is_default: document.getElementById('addressDefault').checked
+            };
+
+            try {
+                if (editingAddressId) {
+                    await API.updateAddress(editingAddressId, addressData);
+                    Toast.success('Address updated successfully!');
+                } else {
+                    await API.addAddress(addressData);
+                    Toast.success('Address added successfully!');
+                }
+                closeAddressModal();
+                loadAddresses();
+            } catch (error) {
+                Toast.error(error.message || 'Failed to save address');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Save Address';
+            }
+        }
+
+        async function setDefaultAddress(addressId) {
+            try {
+                await API.setDefaultAddress(addressId);
+                Toast.success('Default address updated!');
+                loadAddresses();
+            } catch (error) {
+                Toast.error(error.message || 'Failed to set default address');
+            }
+        }
+
+        async function deleteAddress(addressId) {
+            if (!confirm('Are you sure you want to delete this address?')) return;
+
+            try {
+                await API.deleteAddress(addressId);
+                Toast.success('Address deleted successfully!');
+                loadAddresses();
+            } catch (error) {
+                Toast.error(error.message || 'Failed to delete address');
+            }
+        }
+
+        // Close modals on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+
+        // Initialize
+        loadOrders();
+        loadProfile();
+        loadAddresses();
+    </script>
+</body>
+
+</html>

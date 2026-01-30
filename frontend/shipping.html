@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipping Information - E-Shop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .page-content {
+            padding: 80px 0;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .page-content h1 {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .page-content h2 {
+            margin: 30px 0 15px;
+            color: var(--primary-blue-dark);
+        }
+
+        .page-content p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+            color: var(--gray-600);
+        }
+
+        .shipping-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .shipping-table th,
+        .shipping-table td {
+            border: 1px solid var(--gray-200);
+            padding: 12px;
+            text-align: left;
+        }
+
+        .shipping-table th {
+            background: var(--gray-50);
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon"><i class="fas fa-store"></i></div> E-Shop
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="page-content">
+            <h1>Shipping Information</h1>
+
+            <h2>Domestic Shipping</h2>
+            <table class="shipping-table">
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Estimated Time</th>
+                        <th>Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Standard Shipping</td>
+                        <td>3-5 Business Days</td>
+                        <td>$5.99 (Free over $100)</td>
+                    </tr>
+                    <tr>
+                        <td>Express Shipping</td>
+                        <td>1-2 Business Days</td>
+                        <td>$12.99</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>International Shipping</h2>
+            <p>We ship to most countries worldwide. International shipping usually takes 7-14 business days depending on
+                the destination and customs processing.</p>
+
+            <h2>Order Processing</h2>
+            <p>Orders are typically processed within 24 hours (Monday through Friday). You will receive a confirmation
+                email with tracking information once your order has shipped.</p>
+        </div>
+    </main>
+
+    <footer style="background: var(--gray-900); color: var(--white); padding: 60px 0; margin-top: 60px;">
+        <div class="container text-center">
+            <p>&copy; 2026 E-Shop. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

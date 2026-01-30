@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Products - Admin</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .admin-table th,
+        .admin-table td {
+            text-align: left;
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .admin-table th {
+            background: var(--gray-50);
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: var(--spacing-2xl);
+            border-radius: var(--radius-xl);
+            max-width: 500px;
+            width: 90%;
+        }
+    </style>
+</head>
+
+<body style="background: var(--gray-100);">
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="dashboard.html" class="logo">Admin Panel</a>
+                <div style="display: flex; gap: var(--spacing-md);">
+                    <a href="dashboard.html" class="nav-link">Dashboard</a>
+                    <button class="btn btn-primary btn-sm" id="addNewBtn">
+                        <i class="fas fa-plus"></i> Add Product
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container" style="padding: var(--spacing-2xl) 0;">
+        <div
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-xl);">
+            <h1>Inventory Management</h1>
+        </div>
+
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Category</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="productTableBody">
+                <!-- Products dynamically loaded -->
+            </tbody>
+        </table>
+    </main>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <h2 id="modalTitle" style="margin-bottom: var(--spacing-lg);">Add New Product</h2>
+            <form id="productForm">
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-input" id="pName" required>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md);">
+                    <div class="form-group">
+                        <label class="form-label">Price</label>
+                        <input type="number" step="0.01" class="form-input" id="pPrice" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Stock</label>
+                        <input type="number" class="form-input" id="pStock" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <div style="display: flex; gap: var(--spacing-sm);">
+                        <select class="form-select" id="pCategory" required style="flex: 1;"></select>
+                        <button type="button" class="btn btn-outline" id="addCategoryQuickBtn" title="Add New Category">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Image URL</label>
+                    <input type="url" class="form-input" id="pImage" placeholder="https://example.com/image.png">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-input" id="pDesc" rows="3"></textarea>
+                </div>
+                <div style="display: flex; gap: var(--spacing-md); margin-top: var(--spacing-xl);">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Save Product</button>
+                    <button type="button" class="btn btn-outline" style="flex: 1;" id="closeModal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        if (!AuthManager.isLoggedIn() || AuthManager.getUser().role !== 'admin') window.location.href = '../index.html';
+
+        let categories = [];
+        let editingId = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadCategories();
+            await loadProducts();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('action') === 'add') {
+                document.getElementById('addNewBtn').click();
+            }
+        });
+
+        async function loadCategories() {
+            const res = await API.getCategories();
+            categories = res.data;
+            document.getElementById('pCategory').innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        }
+
+        async function loadProducts() {
+            const res = await API.getProducts({ limit: 100 });
+            document.getElementById('productTableBody').innerHTML = res.data.map(p => `
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <img src="${p.image || '../images/placeholder.png'}" style="width: 40px; height: 40px; border-radius: 4px;">
+                            <strong>${p.name}</strong>
+                        </div>
+                    </td>
+                    <td>${Utils.formatPrice(p.price)}</td>
+                    <td><span style="color: ${p.stock < 10 ? 'red' : 'inherit'}">${p.stock}</span></td>
+                    <td>${p.category_name}</td>
+                    <td>
+                        <button class="btn btn-outline btn-sm" onclick="editProduct(${p.id})"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id})"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function deleteProduct(id) {
+            if (!confirm('Are you sure?')) return;
+            try {
+                await API.delete(`/products/${id}`);
+                Toast.success('Product deleted');
+                loadProducts();
+            } catch (err) { Toast.error(err.message); }
+        }
+
+        async function editProduct(id) {
+            try {
+                const res = await API.getProduct(id);
+                const p = res.data;
+                editingId = id;
+                document.getElementById('modalTitle').textContent = 'Edit Product';
+                document.getElementById('pName').value = p.name;
+                document.getElementById('pPrice').value = p.price;
+                document.getElementById('pStock').value = p.stock;
+                document.getElementById('pCategory').value = p.category_id;
+                document.getElementById('pImage').value = p.image || '';
+                document.getElementById('pDesc').value = p.description || '';
+                document.getElementById('productModal').style.display = 'flex';
+            } catch (err) { Toast.error(err.message); }
+        }
+
+        document.getElementById('addNewBtn').addEventListener('click', () => {
+            editingId = null;
+            document.getElementById('modalTitle').textContent = 'Add New Product';
+            document.getElementById('productForm').reset();
+            document.getElementById('productModal').style.display = 'flex';
+        });
+
+        document.getElementById('closeModal').addEventListener('click', () => {
+            document.getElementById('productModal').style.display = 'none';
+        });
+
+        document.getElementById('addCategoryQuickBtn').addEventListener('click', async () => {
+            const name = prompt('Enter new category name:');
+            if (!name) return;
+
+            try {
+                const res = await API.createCategory({ name });
+                Toast.success('Category created!');
+                await loadCategories(); // Refresh the list
+                document.getElementById('pCategory').value = res.data.id; // Select the new category
+            } catch (err) {
+                Toast.error(err.message);
+            }
+        });
+
+        document.getElementById('productForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                name: document.getElementById('pName').value,
+                price: document.getElementById('pPrice').value,
+                stock: document.getElementById('pStock').value,
+                category_id: document.getElementById('pCategory').value,
+                image: document.getElementById('pImage').value,
+                description: document.getElementById('pDesc').value
+            };
+            try {
+                if (editingId) {
+                    await API.put(`/products/${editingId}`, data);
+                    Toast.success('Product updated!');
+                } else {
+                    await API.post('/products', data);
+                    Toast.success('Product created!');
+                }
+                document.getElementById('productModal').style.display = 'none';
+                loadProducts();
+            } catch (err) { Toast.error(err.message); }
+        });
+    </script>
+</body>
+
+</html>

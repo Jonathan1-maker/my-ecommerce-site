@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Shop - Your Premium Online Store</title>
+    <meta name="description"
+        content="Shop the latest electronics, wearables, and accessories at E-Shop. Premium quality products with fast shipping.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    E-Shop
+                </a>
+
+                <div class="nav-toggle" id="navToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="shop.html" class="nav-link">Shop</a></li>
+                    <li><a href="categories.html" class="nav-link">Categories</a></li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <button class="icon-btn" id="searchBtn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <a href="wishlist.html" class="icon-btn" id="wishlistBtn">
+                        <i class="fas fa-heart"></i>
+                        <span class="badge" id="wishlistCount">0</span>
+                    </a>
+                    <button class="icon-btn" id="cartBtn">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="badge" id="cartCount">0</span>
+                    </button>
+                    <button class="btn btn-primary" id="loginBtn">Login</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <!-- Hero Banner -->
+            <section class="hero-banner">
+                <div class="hero-content">
+                    <h1 class="hero-title">Big Sale<br>Up to 50% Off</h1>
+                    <p class="hero-subtitle">Premium smartwatches with advanced features</p>
+                    <button class="btn btn-danger btn-lg" onclick="window.location.href='shop.html';">Shop Now</button>
+                    <div class="carousel-dots">
+                        <span class="dot active"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="images/hero-watch.png" alt="Smart Watch" id="heroImage">
+                </div>
+            </section>
+
+            <!-- Featured Products -->
+            <section>
+                <div class="section-header">
+                    <h2 class="section-title">Featured Products</h2>
+                    <a href="shop.html" class="btn btn-outline">View All</a>
+                </div>
+                <div class="product-grid" id="featuredProducts">
+                    <!-- Products will be loaded here dynamically -->
+                    <div class="spinner" style="margin: 40px auto;"></div>
+                </div>
+            </section>
+
+            <!-- Categories -->
+            <section>
+                <div class="section-header">
+                    <h2 class="section-title">Shop by Category</h2>
+                </div>
+                <div class="product-grid" id="categoriesGrid">
+                    <!-- Categories will be loaded here -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer
+        style="background: var(--gray-900); color: var(--white); padding: var(--spacing-2xl) 0; margin-top: var(--spacing-2xl);">
+        <div class="container">
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-xl);">
+                <div>
+                    <h3 style="margin-bottom: var(--spacing-lg);">E-Shop</h3>
+                    <p style="color: var(--gray-400);">Your trusted online store for premium electronics and
+                        accessories.</p>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: var(--spacing-lg);">Quick Links</h4>
+                    <ul style="list-style: none;">
+                        <li style="margin-bottom: var(--spacing-sm);"><a href="about.html"
+                                style="color: var(--gray-400); text-decoration: none;">About Us</a></li>
+                        <li style="margin-bottom: var(--spacing-sm);"><a href="contact.html"
+                                style="color: var(--gray-400); text-decoration: none;">Contact</a></li>
+                        <li style="margin-bottom: var(--spacing-sm);"><a href="privacy.html"
+                                style="color: var(--gray-400); text-decoration: none;">Privacy Policy</a></li>
+                        <li style="margin-bottom: var(--spacing-sm);"><a href="terms.html"
+                                style="color: var(--gray-400); text-decoration: none;">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: var(--spacing-lg);">Customer Service</h4>
+                    <ul style="list-style: none;">
+                        <li style="margin-bottom: var(--spacing-sm);"><a href="help.html"
+                                style="color: var(--gray-400); text-decoration: none;">Help Center</a></li>
+                        <li style="margin-bottom: var(--spacing-sm);"><a href="track-order.html"
+                                style="color: var(--gray-400); text-decoration: none;">Track Order</a></li>
+                        <li style="margin-bottom: var(--spacing-sm);"><a href="returns.html"
+                                style="color: var(--gray-400); text-decoration: none;">Returns</a></li>
+                        <li style="margin-bottom: var(--spacing-sm);"><a href="shipping.html"
+                                style="color: var(--gray-400); text-decoration: none;">Shipping Info</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: var(--spacing-lg);">Follow Us</h4>
+                    <div style="display: flex; gap: var(--spacing-md);">
+                        <a href="#" style="color: var(--gray-400); font-size: 1.5rem;"><i
+                                class="fab fa-facebook"></i></a>
+                        <a href="#" style="color: var(--gray-400); font-size: 1.5rem;"><i
+                                class="fab fa-twitter"></i></a>
+                        <a href="#" style="color: var(--gray-400); font-size: 1.5rem;"><i
+                                class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div
+                style="text-align: center; margin-top: var(--spacing-2xl); padding-top: var(--spacing-xl); border-top: 1px solid var(--gray-800); color: var(--gray-400);">
+                <p>&copy; 2026 E-Shop. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

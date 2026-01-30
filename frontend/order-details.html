@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details - E-Shop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    E-Shop
+                </a>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="account.html" class="nav-link">Account</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container" style="padding: var(--spacing-2xl) 0;">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-xl);">
+                <h1>Order Details</h1>
+                <a href="account.html" class="btn btn-outline">Back to My Orders</a>
+            </div>
+
+            <div id="orderDetailsContainer">
+                <div class="spinner" style="margin: 40px auto;"></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('id');
+
+        if (!orderId || !AuthManager.isLoggedIn()) {
+            window.location.href = 'account.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadOrderDetails();
+        });
+
+        async function loadOrderDetails() {
+            const container = document.getElementById('orderDetailsContainer');
+            try {
+                const response = await API.getOrder(orderId);
+                const { order, items } = response.data;
+
+                container.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--spacing-xl);">
+                        <div>
+                            <div class="card mb-4">
+                                <h3 class="card-header">Order #${order.id}</h3>
+                                <div style="padding: var(--spacing-md);">
+                                    <p><strong>Date:</strong> ${Utils.formatDate(order.created_at)}</p>
+                                    <p><strong>Status:</strong> <span class="badge" style="background: ${getStatusColor(order.status)}; position: static;">${order.status.toUpperCase()}</span></p>
+                                    <p><strong>Payment Method:</strong> ${order.payment_method.toUpperCase()}</p>
+                                    ${order.tracking_number ? `<p><strong>Tracking:</strong> ${order.tracking_number}</p>` : ''}
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <h3 class="card-header">Items</h3>
+                                ${items.map(item => `
+                                    <div class="flex-between" style="padding: var(--spacing-md); border-bottom: 1px solid var(--gray-100);">
+                                        <div style="display: flex; gap: var(--spacing-md); align-items: center;">
+                                            <img src="${item.image || 'images/placeholder.png'}" style="width: 50px; height: 50px; object-fit: cover; border-radius: var(--radius-sm);">
+                                            <div>
+                                                <p style="font-weight: 600; margin: 0;">${item.name}</p>
+                                                <p class="text-muted" style="font-size: 0.875rem; margin: 0;">Qty: ${item.quantity}</p>
+                                            </div>
+                                        </div>
+                                        <p style="font-weight: 600;">${Utils.formatPrice(item.price * item.quantity)}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="card mb-4">
+                                <h3 class="card-header">Shipping Address</h3>
+                                <div style="padding: var(--spacing-md);">
+                                    <p style="font-weight: 600; margin-bottom: 4px;">${order.full_name}</p>
+                                    <p style="margin: 0;">${order.address_line1}</p>
+                                    <p style="margin: 0;">${order.city}, ${order.zip_code}</p>
+                                    <p style="margin: 0;">${order.country}</p>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <h3 class="card-header">Summary</h3>
+                                <div style="padding: var(--spacing-md);">
+                                    <div class="flex-between mb-2">
+                                        <span class="text-muted">Subtotal:</span>
+                                        <span>${Utils.formatPrice(order.subtotal)}</span>
+                                    </div>
+                                    <div class="flex-between mb-2">
+                                        <span class="text-muted">Shipping:</span>
+                                        <span>${Utils.formatPrice(order.shipping)}</span>
+                                    </div>
+                                    <div class="flex-between" style="font-size: 1.25rem; font-weight: 700; border-top: 2px solid var(--gray-100); padding-top: var(--spacing-md); margin-top: var(--spacing-md);">
+                                        <span>Total:</span>
+                                        <span style="color: var(--primary-blue);">${Utils.formatPrice(order.total)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                container.innerHTML = '<p class="text-danger">Failed to load order details.</p>';
+            }
+        }
+
+        function getStatusColor(status) {
+            const colors = {
+                'pending': '#f59e0b',
+                'processing': '#3b82f6',
+                'shipped': '#8b5cf6',
+                'delivered': '#10b981',
+                'cancelled': '#ef4444'
+            };
+            return colors[status] || '#6b7280';
+        }
+    </script>
+</body>
+
+</html>

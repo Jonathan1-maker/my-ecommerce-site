@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+.npm/
+
+# Environment Variables
+.env
+
+# Uploads
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+.agent/
+.gemini/
+.internal/
+mcp_config.json
+*.log

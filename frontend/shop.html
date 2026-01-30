@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop - E-Shop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    E-Shop
+                </a>
+
+                <div class="nav-toggle" id="navToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="shop.html" class="nav-link active">Shop</a></li>
+                    <li><a href="categories.html" class="nav-link">Categories</a></li>
+                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <button class="icon-btn" id="searchToggle">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <a href="wishlist.html" class="icon-btn" id="wishlistBtn">
+                        <i class="fas fa-heart"></i>
+                        <span class="badge" id="wishlistCount">0</span>
+                    </a>
+                    <a href="cart.html" class="icon-btn" id="cartBtn">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="badge" id="cartCount">0</span>
+                    </a>
+                    <button class="btn btn-primary" id="loginBtn">Login</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container" style="padding: var(--spacing-2xl) 0;">
+            <div style="display: flex; gap: var(--spacing-xl);">
+                <!-- Sidebar Filters -->
+                <aside style="width: 250px; flex-shrink: 0;">
+                    <div class="card" style="position: sticky; top: 100px;">
+                        <h3 style="margin-bottom: var(--spacing-lg);">Filters</h3>
+
+                        <!-- Search -->
+                        <div style="margin-bottom: var(--spacing-lg);">
+                            <label class="form-label">Search</label>
+                            <input type="text" class="form-input" id="searchFilter" placeholder="Search products...">
+                        </div>
+
+                        <!-- Categories -->
+                        <div style="margin-bottom: var(--spacing-lg);">
+                            <label class="form-label">Category</label>
+                            <select class="form-select" id="categoryFilter">
+                                <option value="">All Categories</option>
+                                <!-- Categories loaded dynamically -->
+                            </select>
+                        </div>
+
+                        <!-- Price Range -->
+                        <div style="margin-bottom: var(--spacing-lg);">
+                            <label class="form-label">Price Range</label>
+                            <div style="display: flex; gap: var(--spacing-sm); align-items: center;">
+                                <input type="number" class="form-input" id="minPrice" placeholder="Min">
+                                <span>-</span>
+                                <input type="number" class="form-input" id="maxPrice" placeholder="Max">
+                            </div>
+                        </div>
+
+                        <!-- Sort By -->
+                        <div style="margin-bottom: var(--spacing-xl);">
+                            <label class="form-label">Sort By</label>
+                            <select class="form-select" id="sortFilter">
+                                <option value="created_at">Newest First</option>
+                                <option value="price_asc">Price: Low to High</option>
+                                <option value="price_desc">Price: High to Low</option>
+                                <option value="rating">Top Rated</option>
+                            </select>
+                        </div>
+
+                        <button class="btn btn-primary" style="width: 100%;" id="applyFilters">
+                            Apply Filters
+                        </button>
+                        <button class="btn btn-outline" style="width: 100%; margin-top: var(--spacing-sm);"
+                            id="resetFilters">
+                            Reset
+                        </button>
+                    </div>
+                </aside>
+
+                <!-- Product Grid -->
+                <div style="flex: 1;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-lg);">
+                        <h1 style="font-size: 1.5rem; margin: 0;">All Products</h1>
+                        <p class="text-muted" id="resultsCount">Showing 0 products</p>
+                    </div>
+
+                    <div class="product-grid" id="productsGrid">
+                        <!-- Products loaded dynamically -->
+                        <div class="spinner" style="margin: 40px auto; grid-column: 1 / -1;"></div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div style="display: flex; justify-content: center; gap: var(--spacing-sm); margin-top: var(--spacing-2xl);"
+                        id="pagination">
+                        <!-- Pagination loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Footer -->
+    <footer
+        style="background: var(--gray-900); color: var(--white); padding: var(--spacing-2xl) 0; margin-top: var(--spacing-2xl);">
+        <div class="container">
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-xl);">
+                <div>
+                    <h3 style="margin-bottom: var(--spacing-lg);">E-Shop</h3>
+                    <p style="color: var(--gray-400);">Your trusted online store for premium electronics and
+                        accessories.</p>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: var(--spacing-lg);">Quick Links</h4>
+                    <ul style="list-style: none;">
+                        <li style="margin-bottom: var(--spacing-sm);"><a href="about.html"
+                                style="color: var(--gray-400); text-decoration: none;">About Us</a></li>
+                        <li style="margin-bottom: var(--spacing-sm);"><a href="contact.html"
+                                style="color: var(--gray-400); text-decoration: none;">Contact</a></li>
+                        <li style="margin-bottom: var(--spacing-sm);"><a href="privacy.html"
+                                style="color: var(--gray-400); text-decoration: none;">Privacy Policy</a></li>
+                        <li style="margin-bottom: var(--spacing-sm);"><a href="terms.html"
+                                style="color: var(--gray-400); text-decoration: none;">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: var(--spacing-lg);">Customer Service</h4>
+                    <ul style="list-style: none;">
+                        <li style="margin-bottom: var(--spacing-sm);"><a href="help.html"
+                                style="color: var(--gray-400); text-decoration: none;">Help Center</a></li>
+                        <li style="margin-bottom: var(--spacing-sm);"><a href="track-order.html"
+                                style="color: var(--gray-400); text-decoration: none;">Track Order</a></li>
+                        <li style="margin-bottom: var(--spacing-sm);"><a href="returns.html"
+                                style="color: var(--gray-400); text-decoration: none;">Returns</a></li>
+                        <li style="margin-bottom: var(--spacing-sm);"><a href="shipping.html"
+                                style="color: var(--gray-400); text-decoration: none;">Shipping Info</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: var(--spacing-lg);">Follow Us</h4>
+                    <div style="display: flex; gap: var(--spacing-md);">
+                        <a href="#" style="color: var(--gray-400); font-size: 1.5rem;"><i
+                                class="fab fa-facebook"></i></a>
+                        <a href="#" style="color: var(--gray-400); font-size: 1.5rem;"><i
+                                class="fab fa-twitter"></i></a>
+                        <a href="#" style="color: var(--gray-400); font-size: 1.5rem;"><i
+                                class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div
+                style="text-align: center; margin-top: var(--spacing-2xl); padding-top: var(--spacing-xl); border-top: 1px solid var(--gray-800); color: var(--gray-400);">
+                <p>&copy; 2026 E-Shop. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        let currentPage = 1;
+        const itemsPerPage = 12;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Load filters from URL if any
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('search')) document.getElementById('searchFilter').value = urlParams.get('search');
+            if (urlParams.get('category')) {
+                // We'll set this after loading categories
+            }
+
+            await loadCategories();
+            await loadProducts();
+            updateCartCount();
+            updateWishlistCount();
+
+            // Mobile Menu Toggle
+            const navToggle = document.getElementById('navToggle');
+            const navMenu = document.querySelector('.nav-menu');
+            if (navToggle && navMenu) {
+                navToggle.addEventListener('click', () => {
+                    navToggle.classList.toggle('active');
+                    navMenu.classList.toggle('active');
+                });
+            }
+        });
+
+        async function updateWishlistCount() {
+            const el = document.getElementById('wishlistCount');
+            if (!el || !AuthManager.isLoggedIn()) {
+                if (el) el.textContent = '0';
+                return;
+            }
+            try {
+                const res = await API.getWishlist();
+                el.textContent = res.count || 0;
+            } catch (err) { console.error(err); }
+        }
+
+        async function updateCartCount() {
+            const el = document.getElementById('cartCount');
+            if (!el || !AuthManager.isLoggedIn()) {
+                if (el) el.textContent = '0';
+                return;
+            }
+            try {
+                const res = await API.getCart();
+                el.textContent = res.count || 0;
+            } catch (err) { console.error(err); }
+        }
+
+        // Load Categories
+        async function loadCategories() {
+            try {
+                const response = await API.getCategories();
+                const select = document.getElementById('categoryFilter');
+
+                response.data.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.id;
+                    option.textContent = category.name;
+                    select.appendChild(option);
+                });
+
+                // Set category from URL if present
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('category')) {
+                    select.value = urlParams.get('category');
+                }
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+
+        async function toggleWishlist(productId, btn) {
+            if (!AuthManager.isLoggedIn()) {
+                Toast.error('Please login to use wishlist');
+                return;
+            }
+            const isActive = btn.classList.contains('active');
+            try {
+                if (isActive) {
+                    await API.removeFromWishlist(productId);
+                    btn.classList.remove('active');
+                    btn.querySelector('i').className = 'far fa-heart';
+                    btn.querySelector('i').style.color = '';
+                    Toast.success('Removed from wishlist');
+                } else {
+                    await API.addToWishlist(productId);
+                    btn.classList.add('active');
+                    btn.querySelector('i').className = 'fas fa-heart';
+                    btn.querySelector('i').style.color = 'var(--primary-red)';
+                    Toast.success('Added to wishlist');
+                }
+                updateWishlistCount();
+            } catch (err) { Toast.error(err.message); }
+        }
+
+        // Load Products
+        async function loadProducts() {
+            const container = document.getElementById('productsGrid');
+            container.innerHTML = '<div class="spinner" style="margin: 40px auto; grid-column: 1 / -1;"></div>';
+
+            try {
+                // Build query params
+                const params = {
+                    page: currentPage,
+                    limit: itemsPerPage,
+                    search: document.getElementById('searchFilter').value,
+                    category: document.getElementById('categoryFilter').value,
+                    minPrice: document.getElementById('minPrice').value,
+                    maxPrice: document.getElementById('maxPrice').value,
+                };
+
+                // Handle sorting
+                const sort = document.getElementById('sortFilter').value;
+                if (sort === 'price_asc') {
+                    params.sort = 'price';
+                    params.order = 'ASC';
+                } else if (sort === 'price_desc') {
+                    params.sort = 'price';
+                    params.order = 'DESC';
+                } else if (sort === 'rating') {
+                    params.sort = 'rating';
+                    params.order = 'DESC';
+                }
+
+                const response = await API.getProducts(params);
+                const products = response.data;
+
+                document.getElementById('resultsCount').textContent = `Showing ${products.length} of ${response.total} products`;
+
+                if (products.length === 0) {
+                    container.innerHTML = `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: var(--spacing-2xl);">
+                            <p class="text-muted">No products found matching your criteria.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = products.map(product => `
+                    <div class="product-card" onclick="window.location.href='product.html?id=${product.id}'" style="position: relative;">
+                        <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist(${product.id}, this)">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <img src="${product.image || 'images/placeholder.png'}" alt="${product.name}" class="product-image">
+                        <div class="product-info">
+                            <h3 class="product-name">${product.name}</h3>
+                            <div class="product-price">${Utils.formatPrice(product.price)}</div>
+                            <div class="product-rating">
+                                <span class="stars">${Utils.generateStars(product.rating || 0)}</span>
+                                <span class="reviews-count">(${product.reviews_count || 0})</span>
+                            </div>
+                            <button class="btn btn-primary" style="width: 100%;" onclick="event.stopPropagation(); addToCart(${product.id})">
+                                <i class="fas fa-cart-plus"></i> Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Check which items are in wishlist
+                if (AuthManager.isLoggedIn()) {
+                    const res = await API.getWishlist();
+                    const wishlistIds = res.data.map(i => i.product_id);
+                    container.querySelectorAll('.product-card').forEach((card, index) => {
+                        if (wishlistIds.includes(products[index].id)) {
+                            const btn = card.querySelector('.wishlist-btn');
+                            btn.classList.add('active');
+                            btn.querySelector('i').className = 'fas fa-heart';
+                            btn.querySelector('i').style.color = 'var(--primary-red)';
+                        }
+                    });
+                }
+
+                renderPagination(response.pages);
+
+            } catch (error) {
+                console.error('Error loading products:', error);
+                container.innerHTML = '<p class="text-danger" style="grid-column: 1 / -1; text-align: center;">Failed to load products</p>';
+            }
+        }
+
+        // Render Pagination
+        function renderPagination(totalPages) {
+            const container = document.getElementById('pagination');
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+
+            // Previous
+            html += `<button class="btn btn-outline btn-sm" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">Prev</button>`;
+
+            // Pages
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `<button class="btn ${i === currentPage ? 'btn-primary' : 'btn-outline'} btn-sm" onclick="changePage(${i})">${i}</button>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += `<span style="padding: 0 5px;">...</span>`;
+                }
+            }
+
+            // Next
+            html += `<button class="btn btn-outline btn-sm" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">Next</button>`;
+
+            container.innerHTML = html;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            loadProducts();
+            window.scrollTo(0, 0);
+        }
+
+        // Add to Cart
+        async function addToCart(productId) {
+            if (!AuthManager.isLoggedIn()) {
+                Toast.error('Please login to add items to cart');
+                setTimeout(() => window.location.href = 'login.html', 1500);
+                return;
+            }
+
+            try {
+                await API.addToCart(productId, 1);
+                Toast.success('Product added to cart!');
+                // Update cart count (assuming the helper is available globally or we reload)
+                const cartCountEl = document.getElementById('cartCount');
+                if (cartCountEl) {
+                    const res = await API.getCart();
+                    cartCountEl.textContent = res.count;
+                }
+            } catch (error) {
+                Toast.error(error.message || 'Failed to add to cart');
+            }
+        }
+
+        // Event Listeners
+        document.getElementById('applyFilters').addEventListener('click', () => {
+            currentPage = 1;
+            loadProducts();
+        });
+
+        document.getElementById('resetFilters').addEventListener('click', () => {
+            document.getElementById('searchFilter').value = '';
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('minPrice').value = '';
+            document.getElementById('maxPrice').value = '';
+            document.getElementById('sortFilter').value = 'created_at';
+            currentPage = 1;
+            loadProducts();
+        });
+
+        // Search enter key
+        document.getElementById('searchFilter').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                currentPage = 1;
+                loadProducts();
+            }
+        });
+    </script>
+</body>
+
+</html>

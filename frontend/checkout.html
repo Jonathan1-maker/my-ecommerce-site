@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - E-Shop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    E-Shop
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container" style="padding: var(--spacing-2xl) 0;">
+            <h1 style="margin-bottom: var(--spacing-xl);">Checkout Page</h1>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--spacing-xl);">
+                <!-- Shipping Form -->
+                <div>
+                    <div class="card">
+                        <h2 class="card-header">Shipping Address</h2>
+                        <form id="checkoutForm">
+                            <div class="form-group">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" class="form-input" id="shipName" placeholder="John Doe" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Address</label>
+                                <input type="text" class="form-input" id="shipAddress" placeholder="123 Street Address"
+                                    required>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md);">
+                                <div class="form-group">
+                                    <label class="form-label">City</label>
+                                    <input type="text" class="form-input" id="shipCity" placeholder="City" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">ZIP Code</label>
+                                    <input type="text" class="form-input" id="shipZip" placeholder="12345" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Country</label>
+                                <select class="form-select" id="shipCountry" required>
+                                    <option value="USA">United States</option>
+                                    <option value="UK">United Kingdom</option>
+                                    <option value="CAN">Canada</option>
+                                    <option value="AUS">Australia</option>
+                                    <option value="RWA">Rwanda</option>
+                                    <option value="UGA">Uganda</option>
+                                    <option value="ETH">Ethiopia</option>
+                                    <option value="KEN">Kenya</option>
+                                    <option value="TZA">Tanzania</option>
+                                    <option value="COD">Congo(DRC)</option>
+                                    <option value="ZMB">Zambia</option>
+                                    <option value="ZIM">Zimbabwe</option>
+
+
+                                </select>
+                            </div>
+
+                            <h3 style="margin: var(--spacing-xl) 0 var(--spacing-md);">Payment Method</h3>
+                            <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+                                <label
+                                    style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer; padding: var(--spacing-md); border: 2px solid var(--gray-200); border-radius: var(--radius-md);">
+                                    <input type="radio" name="payment" value="cod" checked>
+                                    <span>Cash on Delivery (COD)</span>
+                                </label>
+                                <label
+                                    style="display: flex; align-items: center; gap: var(--spacing-sm); cursor: pointer; padding: var(--spacing-md); border: 2px solid var(--gray-200); border-radius: var(--radius-md);">
+                                    <input type="radio" name="payment" value="stripe">
+                                    <span>Credit Card (Stripe)</span>
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Summary -->
+                <div>
+                    <div class="card">
+                        <h2 class="card-header">Order Summary</h2>
+                        <div id="checkoutItems"
+                            style="margin-bottom: var(--spacing-lg); max-height: 300px; overflow-y: auto;">
+                            <!-- Brief list of items -->
+                        </div>
+
+                        <div style="border-top: 1px solid var(--gray-100); padding-top: var(--spacing-lg);">
+                            <div class="flex-between mb-2">
+                                <span class="text-muted">Subtotal:</span>
+                                <span id="summarySubtotal">$0.00</span>
+                            </div>
+                            <div class="flex-between mb-2">
+                                <span class="text-muted">Shipping:</span>
+                                <span id="summaryShipping">$10.00</span>
+                            </div>
+                            <div class="flex-between"
+                                style="font-size: 1.25rem; font-weight: 700; border-top: 2px solid var(--gray-100); padding-top: var(--spacing-md); margin-top: var(--spacing-md);">
+                                <span>Total:</span>
+                                <span id="summaryTotal" style="color: var(--primary-red);">$0.00</span>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-danger btn-lg" style="width: 100%; margin-top: var(--spacing-xl);"
+                            id="confirmOrderBtn">
+                            Place Order
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        if (!AuthManager.isLoggedIn()) {
+            window.location.href = 'login.html';
+        }
+
+        let cartItems = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadSummary();
+        });
+
+        async function loadSummary() {
+            try {
+                const response = await API.getCart();
+                cartItems = response.data;
+
+                if (cartItems.length === 0) {
+                    window.location.href = 'cart.html';
+                    return;
+                }
+
+                const subtotal = parseFloat(response.total);
+                const shipping = subtotal > 100 ? 0 : 10;
+                const total = subtotal + shipping;
+
+                document.getElementById('summarySubtotal').textContent = Utils.formatPrice(subtotal);
+                document.getElementById('summaryShipping').textContent = shipping === 0 ? 'FREE' : Utils.formatPrice(shipping);
+                document.getElementById('summaryTotal').textContent = Utils.formatPrice(total);
+
+                document.getElementById('checkoutItems').innerHTML = cartItems.map(item => `
+                    <div class="flex-between mb-1" style="font-size: 0.875rem;">
+                        <span>${item.quantity}x ${item.name}</span>
+                        <span>${Utils.formatPrice(item.subtotal)}</span>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        document.getElementById('confirmOrderBtn').addEventListener('click', async () => {
+            const form = document.getElementById('checkoutForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const orderData = {
+                shipping_info: {
+                    full_name: document.getElementById('shipName').value,
+                    address_line1: document.getElementById('shipAddress').value,
+                    city: document.getElementById('shipCity').value,
+                    zip_code: document.getElementById('shipZip').value,
+                    country: document.getElementById('shipCountry').value
+                },
+                payment_method: document.querySelector('input[name="payment"]:checked').value,
+                items: cartItems.map(item => ({
+                    product_id: item.product_id,
+                    quantity: item.quantity
+                }))
+            };
+
+            try {
+                const response = await API.createOrder(orderData);
+                Toast.success('Order placed successfully!');
+                setTimeout(() => {
+                    window.location.href = `account.html`;
+                }, 2000);
+            } catch (error) {
+                Toast.error(error.message);
+            }
+        });
+    </script>
+</body>
+
+</html>
