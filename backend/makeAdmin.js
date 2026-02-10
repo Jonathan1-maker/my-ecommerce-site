@@ -1,18 +1,17 @@
-const mysql = require('mysql2/promise');
+const { Client } = require('pg');
 require('dotenv').config();
 
 async function makeAdmin(email) {
-    let connection;
-    try {
-        connection = await mysql.createConnection({
-            host: process.env.DB_HOST || 'localhost',
-            user: process.env.DB_USER || 'root',
-            password: process.env.DB_PASSWORD || '',
-            database: process.env.DB_NAME || 'ecommerce_db',
-            port: process.env.DB_PORT || 3306
-        });
+    const connectionString = process.env.DATABASE_URL;
+    const client = new Client({
+        connectionString,
+        ssl: { rejectUnauthorized: false }
+    });
 
-        const [users] = await connection.execute('SELECT id, name, role FROM users WHERE email = ?', [email]);
+    try {
+        await client.connect();
+
+        const { rows: users } = await client.query('SELECT id, name, role FROM users WHERE email = $1', [email]);
 
         if (users.length === 0) {
             console.error(`❌ User with email ${email} not found.`);
@@ -25,13 +24,13 @@ async function makeAdmin(email) {
             return;
         }
 
-        await connection.execute('UPDATE users SET role = "admin" WHERE id = ?', [user.id]);
+        await client.query("UPDATE users SET role = 'admin' WHERE id = $1", [user.id]);
         console.log(`✅ User ${user.name} (${email}) has been elevated to admin!`);
 
     } catch (error) {
         console.error('❌ Error updating user role:', error.message);
     } finally {
-        if (connection) await connection.end();
+        await client.end();
     }
 }
 
@@ -41,3 +40,4 @@ if (!email) {
 } else {
     makeAdmin(email);
 }
+

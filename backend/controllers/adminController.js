@@ -15,7 +15,7 @@ exports.getDashboardStats = async (req, res) => {
 
         // Total users
         const [usersResult] = await db.query(
-            'SELECT COUNT(*) as total_users FROM users WHERE role = "user"'
+            "SELECT COUNT(*) as total_users FROM users WHERE role = 'user'"
         );
 
         // Total products
@@ -25,7 +25,7 @@ exports.getDashboardStats = async (req, res) => {
 
         // Pending orders
         const [pendingResult] = await db.query(
-            'SELECT COUNT(*) as pending_orders FROM orders WHERE status = "pending"'
+            "SELECT COUNT(*) as pending_orders FROM orders WHERE status = 'pending'"
         );
 
         // Recent orders
@@ -40,13 +40,13 @@ exports.getDashboardStats = async (req, res) => {
         // Sales by month (last 6 months)
         const [monthlySales] = await db.query(
             `SELECT 
-                DATE_FORMAT(created_at, '%Y-%m') as month,
+                TO_CHAR(created_at, 'YYYY-MM') as month,
                 SUM(total) as revenue,
                 COUNT(*) as orders
              FROM orders
-             WHERE created_at >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+             WHERE created_at >= NOW() - INTERVAL '6 months'
              AND payment_status = 'completed'
-             GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+             GROUP BY TO_CHAR(created_at, 'YYYY-MM')
              ORDER BY month DESC`
         );
 
@@ -213,7 +213,7 @@ exports.deleteUser = async (req, res) => {
         console.log('Delete Request Debug:', { targetId, requesterId, targetRole: targetUser[0].role });
 
         // Find the actual Super Admin (admin with the lowest ID)
-        const [admins] = await db.query('SELECT id FROM users WHERE role = "admin" ORDER BY id ASC LIMIT 1');
+        const [admins] = await db.query("SELECT id FROM users WHERE role = 'admin' ORDER BY id ASC LIMIT 1");
         const superAdminId = admins[0].id;
 
         // If target is admin, only the Super Admin can delete

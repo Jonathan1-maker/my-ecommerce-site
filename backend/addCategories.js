@@ -1,16 +1,15 @@
-const mysql = require('mysql2/promise');
+const { Client } = require('pg');
 require('dotenv').config();
 
 async function addCategories() {
-    let connection;
+    const connectionString = process.env.DATABASE_URL || `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
+    const client = new Client({
+        connectionString,
+        ssl: { rejectUnauthorized: false }
+    });
+
     try {
-        connection = await mysql.createConnection({
-            host: process.env.DB_HOST || 'localhost',
-            user: process.env.DB_USER || 'root',
-            password: process.env.DB_PASSWORD || '',
-            database: process.env.DB_NAME || 'ecommerce_db',
-            port: process.env.DB_PORT || 3306
-        });
+        await client.connect();
 
         const newCategories = [
             ['Computers', 'Laptops, desktops, and accessories'],
@@ -23,14 +22,14 @@ async function addCategories() {
         ];
 
         console.log('--- Current Categories ---');
-        const [existing] = await connection.execute('SELECT name FROM categories');
+        const { rows: existing } = await client.query('SELECT name FROM categories');
         const existingNames = existing.map(c => c.name);
         console.log(existingNames.join(', ') || 'No categories found');
 
         let addedCount = 0;
         for (const [name, desc] of newCategories) {
             if (!existingNames.includes(name)) {
-                await connection.execute('INSERT INTO categories (name, description) VALUES (?, ?)', [name, desc]);
+                await client.query('INSERT INTO categories (name, description) VALUES ($1, $2)', [name, desc]);
                 addedCount++;
                 console.log(`✅ Added category: ${name}`);
             }
@@ -45,8 +44,9 @@ async function addCategories() {
     } catch (error) {
         console.error('❌ Error updating categories:', error.message);
     } finally {
-        if (connection) await connection.end();
+        await client.end();
     }
 }
 
 addCategories();
+

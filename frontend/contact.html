@@ -353,7 +353,7 @@
                 }
             } catch (error) {
                 console.error('Contact error:', error);
-                Toast.error('An error occurred. Check Console (F12).');
+                Toast.error(error.message || 'An error occurred. Check Console (F12).');
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
